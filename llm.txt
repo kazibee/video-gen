@@ -1,0 +1,42 @@
+Tool: video-gen
+Package: @kazibee/video-gen
+
+Use this tool for Veo/Gemini video generation.
+
+Auth requirements
+- GEMINI_API_KEY (required)
+- GEMINI_VIDEO_MODEL (optional, default: veo-3.0-generate-preview)
+
+Runtime note
+- Configure keys with: `kazibee env video-gen --set GEMINI_API_KEY=...`
+
+Typical intents to map
+- "which video model are we using" -> getModel()
+- "which video models are available" -> listModels({ videoOnly: true, pageSize: 100 })
+- "start generating a video" -> startGenerateVideo(prompt, options?)
+- "check generation status" -> getOperation(operationName)
+- "wait for completion" -> waitForOperation(operationName, pollMs, timeoutMs)
+- "generate and wait" -> generateVideo(prompt, options?)
+
+Code call examples
+```ts
+const model = tools["video-gen"].getModel();
+const models = await tools["video-gen"].listModels({ videoOnly: true, pageSize: 100 });
+
+const op = await tools["video-gen"].startGenerateVideo(
+  "Cinematic shot of a futuristic city skyline in rain",
+  { aspectRatio: "16:9", durationSeconds: 6, numberOfVideos: 1 }
+);
+
+const status = await tools["video-gen"].getOperation(op.name);
+const done = await tools["video-gen"].waitForOperation(op.name, 5000, 10 * 60 * 1000);
+
+const final = await tools["video-gen"].generateVideo(
+  "Aerial flyover of tropical island at sunset",
+  { aspectRatio: "16:9", durationSeconds: 5 }
+);
+```
+
+Output behavior
+- Return operation name immediately for async workflows.
+- On completion, include extracted video URIs and raw operation payload.
