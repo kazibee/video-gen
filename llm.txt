@@ -5,27 +5,44 @@ Use this tool for Veo/Gemini video generation.
 
 Auth requirements
 - GEMINI_API_KEY (required)
-- GEMINI_VIDEO_MODEL (optional, default: veo-3.0-generate-preview)
+- GEMINI_VIDEO_MODEL (optional, default: veo-3.1-generate-preview)
 
 Runtime note
 - Configure keys with: `kazibee env video-gen --set GEMINI_API_KEY=...`
+- You can override model per request via options: `{ model: "veo-3.1-generate-preview" }`.
+
+Model support guidance
+- Call `getModelSupportGuide(model?)` before using advanced options.
+- Capabilities are model-dependent; use `listModels({ videoOnly: true })` + probe calls.
 
 Typical intents to map
 - "which video model are we using" -> getModel()
 - "which video models are available" -> listModels({ videoOnly: true, pageSize: 100 })
+- "does this model support reference images" -> getModelSupportGuide(model?)
 - "start generating a video" -> startGenerateVideo(prompt, options?)
 - "check generation status" -> getOperation(operationName)
+- "cancel this render" -> cancelOperation(operationName)
 - "wait for completion" -> waitForOperation(operationName, pollMs, timeoutMs)
 - "generate and wait" -> generateVideo(prompt, options?)
+- "download output" -> downloadVideo(uri, outputPath) or downloadFirstVideoFromOperation(...)
 
 Code call examples
 ```ts
 const model = tools["video-gen"].getModel();
 const models = await tools["video-gen"].listModels({ videoOnly: true, pageSize: 100 });
+const guide = await tools["video-gen"].getModelSupportGuide();
 
 const op = await tools["video-gen"].startGenerateVideo(
   "Cinematic shot of a futuristic city skyline in rain",
-  { aspectRatio: "16:9", durationSeconds: 6, numberOfVideos: 1 }
+  {
+    model: "veo-3.1-generate-preview",
+    aspectRatio: "16:9",
+    durationSeconds: 6,
+    numberOfVideos: 1,
+    resolution: "1080p",
+    referenceImages: [{ path: "/tmp/style-ref.png" }],
+    firstFramePath: "/tmp/first-frame.png"
+  }
 );
 
 const status = await tools["video-gen"].getOperation(op.name);
@@ -33,10 +50,13 @@ const done = await tools["video-gen"].waitForOperation(op.name, 5000, 10 * 60 * 
 
 const final = await tools["video-gen"].generateVideo(
   "Aerial flyover of tropical island at sunset",
-  { aspectRatio: "16:9", durationSeconds: 5 }
+  { model: "veo-3.1-generate-preview", aspectRatio: "16:9", durationSeconds: 5 }
 );
+
+const saved = await tools["video-gen"].downloadFirstVideoFromOperation(final.operationName, "/tmp/video.mp4");
 ```
 
 Output behavior
 - Return operation name immediately for async workflows.
 - On completion, include extracted video URIs and raw operation payload.
+- For advanced features, mention whether current model guide indicates support.

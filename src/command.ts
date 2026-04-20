@@ -8,6 +8,6 @@ export interface LoginResult {
  */
 export async function login(): Promise<LoginResult> {
   throw new Error(
-    'Set GEMINI_API_KEY via environment. Optional: GEMINI_VIDEO_MODEL (default veo-3.0-generate-preview).',
+    'Set GEMINI_API_KEY via environment. Optional: GEMINI_VIDEO_MODEL (default veo-3.1-generate-preview).',
   );
 }

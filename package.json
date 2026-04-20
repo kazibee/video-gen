@@ -4,6 +4,9 @@
   "type": "module",
   "main": "./src/index.ts",
   "command": "./src/command.ts",
+  "kazibee": {
+    "description": "Generate videos from text prompts using Google's Gemini Veo API with advanced steering options."
+  },
   "devDependencies": {
     "@types/bun": "^1.3.8"
   }

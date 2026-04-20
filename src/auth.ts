@@ -8,7 +8,7 @@ export interface AuthConfig {
   model: string;
 }
 
-const DEFAULT_VIDEO_MODEL = 'veo-3.0-generate-preview';
+const DEFAULT_VIDEO_MODEL = 'veo-3.1-generate-preview';
 
 /** Reads env config for Google Veo/Gemini video generation. */
 export function getAuthConfig(env: Env): AuthConfig {

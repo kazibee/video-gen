@@ -5,6 +5,8 @@ export type { Env } from './auth';
 export type {
   ListModelsOptions,
   GeminiModelInfo,
+  ModelSupportGuide,
+  ReferenceImageInput,
   GenerateVideoOptions,
   OperationResult,
   GeneratedVideoInfo,
